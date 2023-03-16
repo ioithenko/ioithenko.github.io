@@ -5,12 +5,35 @@
     <link>https://example.com/post/</link>
       <atom:link href="https://example.com/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Posts</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sun, 13 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Fri, 17 Mar 2023 00:12:46 +0300</lastBuildDate>
     <image>
       <url>https://example.com/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png</url>
       <title>Posts</title>
       <link>https://example.com/post/</link>
     </image>
+    
+    <item>
+      <title>Git</title>
+      <link>https://example.com/post/git/</link>
+      <pubDate>Fri, 17 Mar 2023 00:12:46 +0300</pubDate>
+      <guid>https://example.com/post/git/</guid>
+      <description>&lt;p&gt;Version Control Systems (VCS) are used when several people work on one project. Usually, the main project tree is stored in a local or remote repository, to which access is configured for project participants. When making changes to the project content, the version control system allows you to fix them, combine changes made by different project participants, roll back to any earlier version of the project, if required.&lt;/p&gt;
+&lt;p&gt;In classical version control systems, a centralized model is used, assuming a single repository for storing files. Most version control functions are performed by a special server. The project participant (user) receives the version of files he needs before starting work through certain commands. After making changes, the user places the new version in the repository. At the same time, previous versions are not deleted from the central repository and you can return to them at any time.&lt;/p&gt;
+&lt;p&gt;Version control systems support the ability to track and resolve conflicts that may arise when several people work on a single file. You can merge (merge) changes made by different participants (automatically or manually), manually select the desired version, cancel the changes altogether or lock files for modification. Depending on the settings, the lock does not allow other users to get a working copy or prevents changing the working copy of the file by means of the OS file system, thus providing privileged access to only one user working with the file.&lt;/p&gt;
+&lt;p&gt;The Git version control system is a set of command-line programs. They can be accessed from the terminal by entering the git command with various options. Due to the fact that Git is a distributed version control system, a backup copy of the local storage can be made by simple copying or archiving.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>My last week</title>
+      <link>https://example.com/post/last_week/</link>
+      <pubDate>Thu, 16 Mar 2023 23:44:59 +0300</pubDate>
+      <guid>https://example.com/post/last_week/</guid>
+      <description>&lt;h2 id=&#34;this-week-has-been-productive&#34;&gt;This week has been productive.&lt;/h2&gt;
+&lt;p&gt;Hello! I am going to tell you how I spent this week. This week has been quite productive. I completed all my current homework to go to my hometown and spend weekends with my family. In addition, I also had time to watch TV shows and meet friends. I plan to do even more next week since some deadlines will approach.&lt;/p&gt;
+&lt;p&gt;In conclusion, I would like to say that I have worked hard this week. But next week I am planning to be even more hardworking. Thank you for reading this post.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Welcome to Wowchemy, the website builder for Hugo</title>
@@ -196,7 +219,7 @@ data.head()
 
 
 
-&lt;div id=&#34;chart-783294561&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;chart-986731245&#34; class=&#34;chart&#34;&gt;&lt;/div&gt;
 &lt;script&gt;
   (function() {
     let a = setInterval( function() {
@@ -206,7 +229,7 @@ data.head()
       clearInterval( a );
 
       Plotly.d3.json(&#34;./line-chart.json&#34;, function(chart) {
-        Plotly.plot(&#39;chart-783294561&#39;, chart.data, chart.layout, {responsive: true});
+        Plotly.plot(&#39;chart-986731245&#39;, chart.data, chart.layout, {responsive: true});
       });
     }, 500 );
   })();
