@@ -5,12 +5,43 @@
     <link>https://example.com/post/</link>
       <atom:link href="https://example.com/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Posts</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sat, 08 Apr 2023 14:21:59 +0300</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Wed, 26 Apr 2023 23:07:26 +0300</lastBuildDate>
     <image>
       <url>https://example.com/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png</url>
       <title>Posts</title>
       <link>https://example.com/post/</link>
     </image>
+    
+    <item>
+      <title>My week</title>
+      <link>https://example.com/post/last_week3/</link>
+      <pubDate>Wed, 26 Apr 2023 23:07:26 +0300</pubDate>
+      <guid>https://example.com/post/last_week3/</guid>
+      <description>&lt;h1 id=&#34;this-week-has-been-quite-unproductive&#34;&gt;This week has been quite unproductive.&lt;/h1&gt;
+&lt;p&gt;I did the required minimum of my homework and spent my free time watching new series. I plan to do much more next week.&lt;/p&gt;
+&lt;h1 id=&#34;my-review-of-the-week&#34;&gt;My review of the week.&lt;/h1&gt;
+&lt;p&gt;In conclusion, I would like to say there should be some weeks to just take a break and go for a walk.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Report</title>
+      <link>https://example.com/post/report/</link>
+      <pubDate>Wed, 26 Apr 2023 23:07:16 +0300</pubDate>
+      <guid>https://example.com/post/report/</guid>
+      <description>&lt;p&gt;Every week we do laboratory work. Then we should prepare a report on our labs. We perform reports for laboratory work with the use of the lightweight markup language markdown.&lt;/p&gt;
+&lt;h1 id=&#34;what-is-markdown&#34;&gt;What is MARKDOWN?&lt;/h1&gt;
+&lt;p&gt;Markdown is a lightweight markup language for creating formatted text using a plain-text editor. John Gruber and Aaron Swartz created Markdown in 2004 as a markup language that is appealing to human readers in its source code form. Markdown is widely used in blogging, instant messaging, online forums, collaborative software, documentation pages, and readme files.&lt;/p&gt;
+&lt;h1 id=&#34;how-do-we-execute-the-report&#34;&gt;How do we execute the report?&lt;/h1&gt;
+&lt;p&gt;For each laboratory work, we have a template that we need to fill in with all the necessary information.
+The title page of the report contains information about the number of the lab, the topic and the author of the report. Next, we describe the purpose of the laboratory work, the task, as well as a theoretical introduction.&lt;/p&gt;
+&lt;p&gt;And then the description of the main part of the work begins.&lt;/p&gt;
+&lt;h2 id=&#34;description-of-the-work&#34;&gt;Description of the work.&lt;/h2&gt;
+&lt;p&gt;We should describe the accomplishment of the work as fully and clearly as possible
+To do this, we can divide the job description into several parts, insert screenshots, listings etc.&lt;/p&gt;
+&lt;p&gt;Creating a report is an important stage of laboratory work, because it is during the execution of the report that the material is consolidated, and its full awareness occurs.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Markdown</title>
