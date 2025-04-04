@@ -1,25 +1,24 @@
 ---
 # Leave the homepage title empty to use the site title
 title:
-date: 2022-10-24
+date: 2025-03-22
 type: landing
 
 sections:
   - block: hero
     content:
       title: |
-        Wowchemy
-        Research Group
+        PureCheck
       image:
         filename: welcome.jpg
       text: |
         <br>
         
-        The **Wowchemy Research Group** has been a center of excellence for Artificial Intelligence research, teaching, and practice since its founding in 2016.
-  
+        Наш инновационный детектор свежести — это простое и надежное решение, которое за секунды определяет качество мяса, рыбы, молочных и других скоропортящихся продуктов. С этим компактным устройством вы всегда будете уверены в безопасности и свежести того, что попадает на ваш стол или прилавок.
+          
   - block: collection
     content:
-      title: Latest News
+      title: Материалы проекта
       subtitle:
       text:
       count: 5
@@ -36,35 +35,15 @@ sections:
       view: card
       columns: '1'
   
-  - block: markdown
-    content:
-      title:
-      subtitle: ''
-      text:
-    design:
-      columns: '1'
-      background:
-        image: 
-          filename: coders.jpg
-          filters:
-            brightness: 1
-          parallax: false
-          position: center
-          size: cover
-          text_color_light: true
-      spacing:
-        padding: ['20px', '0', '20px', '0']
-      css_class: fullscreen
-
   - block: collection
     content:
-      title: Latest Preprints
+      title: Последние работы
       text: ""
       count: 5
       filters:
         folders:
           - publication
-        publication_type: 'article'
+        publication_type: ''
     design:
       view: citation
       columns: '1'
