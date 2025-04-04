@@ -34,13 +34,27 @@ sections:
     design:
       view: card
       columns: '1'
+  
+  - block: collection
+    content:
+      title: Последние работы
+      text: ""
+      count: 5
+      filters:
+        folders:
+          - publication
+        publication_type: ''
+    design:
+      view: citation
+      columns: '1'
+
 
   - block: markdown
     content:
       title:
       subtitle:
       text: |
-        {{% cta cta_link="./people/" cta_text="Познакомиться с командой →" %}}
+        {{% cta cta_link="./people/" cta_text="Meet the team →" %}}
     design:
       columns: '1'
 ---
