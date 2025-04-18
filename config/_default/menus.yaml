@@ -10,4 +10,6 @@ main:
   - name: Разработчики
     url: people
     weight: 30
-
+  - name: Авторизация
+    url: authorization
+    weight: 40

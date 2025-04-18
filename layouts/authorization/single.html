@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ .Title }} | {{ .Site.Title }}</title>
+  <style>
+    :root {
+      --primary: #979fc5;
+      --primary-dark: #656a7e;
+      --secondary: #f72585;
+      --dark: #212529;
+      --light: #f8f9fa;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .auth-container {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    .auth-header {
+      background: var(--primary);
+      color: white;
+      padding: 28px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .auth-header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .auth-header p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+    
+    .auth-form {
+      padding: 32px;
+    }
+    
+    .input-group {
+      margin-bottom: 24px;
+      position: relative;
+    }
+    
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark);
+      font-size: 0.95rem;
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .input-group input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    .auth-button {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 8px;
+    }
+    
+    .auth-button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    .auth-footer {
+      text-align: center;
+      padding: 0 32px 32px;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+    
+    .auth-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .decoration {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+    
+    .decoration-1 {
+      top: -40px;
+      right: -40px;
+    }
+    
+    .decoration-2 {
+      bottom: -60px;
+      left: -30px;
+      width: 160px;
+      height: 160px;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Адаптивность */
+    @media (max-width: 480px) {
+      .auth-container {
+        border-radius: 12px;
+      }
+      
+      .auth-header {
+        padding: 24px;
+      }
+      
+      .auth-form {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container" x-data="{ email: '', password: '', remember: false }">
+    <div class="auth-header">
+      <div class="decoration decoration-1"></div>
+      <div class="decoration decoration-2"></div>
+      <h1>Добро пожаловать</h1>
+      <p>Войдите в свой аккаунт</p>
+    </div>
+    
+    <form class="auth-form" @submit.prevent="login(email, password)">
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input 
+          id="email" 
+          type="email" 
+          x-model="email" 
+          placeholder="your@email.com" 
+          required
+        >
+      </div>
+      
+      <div class="input-group">
+        <label for="password">Пароль</label>
+        <input 
+          id="password" 
+          type="password" 
+          x-model="password" 
+          placeholder="••••••••" 
+          required
+        >
+      </div>
+      
+      <div class="input-group" style="display: flex; align-items: center;">
+        <input 
+          id="remember" 
+          type="checkbox" 
+          x-model="remember"
+          style="width: auto; margin-right: 10px;"
+        >
+        <label for="remember" style="margin-bottom: 0;">Запомнить меня</label>
+      </div>
+      
+      <button class="auth-button" type="submit">
+        Войти
+      </button>
+    </form>
+    
+    <div class="auth-footer">
+      Нет аккаунта? <a href="/register">Зарегистрируйтесь</a><br>
+      <a href="/forgot-password">Забыли пароль?</a>
+    </div>
+  </div>
+
+  <!-- Alpine.js для интерактивности -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    function login(email, password) {
+      console.log('Login attempt with:', { email, password });
+      // Здесь будет интеграция с Firebase
+      alert('Авторизация успешна! (заглушка)');
+    }
+  </script>
+</body>
+</html>
