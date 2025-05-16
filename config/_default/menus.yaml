@@ -13,3 +13,9 @@ main:
   - name: Авторизация
     url: authorization
     weight: 40
+  - name: Выход
+    url: logout
+    weight: 60
+    id: logout-link
+    params:
+      class: hidden

@@ -1,0 +1,61 @@
+{{ define "main" }}
+<article class="post-content">
+  {{ .Content }}
+</article>
+
+{{ if .Site.Params.enableHFApi }}
+<button id="hf-translate-btn" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px;
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+">
+  Перевести на English
+</button>
+
+<script>
+document.getElementById('hf-translate-btn').addEventListener('click', async function() {
+  const btn = this;
+  const content = document.querySelector('.post-content');
+  const originalText = content.innerText;
+  
+  // Показываем загрузку
+  btn.disabled = true;
+  btn.textContent = 'Идёт перевод...';
+  
+  try {
+    // 1. Отправляем запрос в Hugging Face
+    const response = await fetch(
+      'https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-ru-en',
+      {
+        method: 'POST',
+        headers: { 
+          'Authorization': 'Bearer {{ .Site.Params.hfApiKey }}',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ inputs: originalText })
+      }
+    );
+    
+    // 2. Обрабатываем ответ
+    if (!response.ok) throw new Error('Ошибка API');
+    const data = await response.json();
+    
+    // 3. Подставляем перевод
+    content.innerHTML = data[0].translation_text;
+    btn.remove();
+    
+  } catch (error) {
+    console.error('Ошибка перевода:', error);
+    btn.textContent = 'Ошибка! Кликните ещё раз';
+    btn.disabled = false;
+  }
+});
+</script>
+{{ end }}
+{{ end }}
