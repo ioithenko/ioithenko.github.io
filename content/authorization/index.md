@@ -1,4 +1,6 @@
 ---
 title: "Авторизация"
-type: "authorization"
+url: "/auth/"  # Явно задаем URL
+slug: "auth"   # Добавляем slug
+layout: "authorization/single"
 ---

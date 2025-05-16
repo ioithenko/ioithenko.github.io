@@ -34,19 +34,6 @@ sections:
     design:
       view: card
       columns: '1'
-  
-  - block: collection
-    content:
-      title: Последние работы
-      text: ""
-      count: 5
-      filters:
-        folders:
-          - publication
-        publication_type: ''
-    design:
-      view: citation
-      columns: '1'
 
   - block: markdown
     content:
