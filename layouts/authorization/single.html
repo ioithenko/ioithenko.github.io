@@ -2,6 +2,8 @@
 <html lang="ru">
 <head>
   {{ partial "head" . }}
+
+  <link rel="stylesheet" href="/css/auth.css">
   
   <!-- Firebase SDK -->
   <script type="module">
@@ -92,44 +94,44 @@
 
   <main class="auth-main">
     <div class="auth-container">
-      <div class="auth-header">
-        <div class="decoration decoration-1"></div>
-        <div class="decoration decoration-2"></div>
-        <h1>Добро пожаловать</h1>
-        <p>Войдите в свой аккаунт</p>
-      </div>
-      
-      <form class="auth-form" id="login-form">
-        <div class="input-group">
-          <label for="email">Email</label>
-          <input 
-            id="email" 
-            type="email" 
-            placeholder="your@email.com" 
-            required
-          >
-        </div>
-        
-        <div class="input-group">
-          <label for="password">Пароль</label>
-          <input 
-            id="password" 
-            type="password" 
-            placeholder="••••••••" 
-            required
-          >
-        </div>
-        
-        <button class="auth-button" type="submit">
-          Войти
-        </button>
-
-        <div id="error-message"></div>
-      </form>
-      
+  <div class="auth-decoration decoration-1"></div>
+  <div class="auth-decoration decoration-2"></div>
+  
+  <h1 class="auth-title">Добро пожаловать</h1>
+  
+  <form class="auth-form" id="login-form">
+    <div class="auth-input-group">
+      <span class="auth-input-icon">✉️</span>
+      <input 
+        id="email" 
+        type="email" 
+        placeholder="Ваш email" 
+        class="auth-input"
+        required
+      >
     </div>
+    
+    <div class="auth-input-group">
+      <span class="auth-input-icon">🔒</span>
+      <input 
+        id="password" 
+        type="password" 
+        placeholder="Пароль" 
+        class="auth-input"
+        required
+      >
+    </div>
+    
+    <button class="auth-button" type="submit">
+      Войти
+    </button>
+    
+    <div id="error-message" style="color: #e63946; margin-top: 1rem;"></div>
+  </form>
+  
+
+</div>
   </main>
 
-  {{ partial "footer" . }}
 </body>
 </html>
