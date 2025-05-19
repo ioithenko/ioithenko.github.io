@@ -64,8 +64,11 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
-<script>
-  // Ваша конфигурация Firebase
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js';
+  import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js';
+
+  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyBOgF_Ugu3KCqb26VDd1CtRs6dECJK7g4U",
     authDomain: "purecheck.firebaseapp.com",
@@ -77,73 +80,56 @@
   };
 
   // Инициализация Firebase
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-  // Элементы интерфейса
-  const translateBtn = document.getElementById('translate-btn');
-  const authStatus = document.getElementById('auth-status');
-
-  // Проверка состояния авторизации
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      // Пользователь авторизован
-      translateBtn.style.display = 'block';
-      authStatus.innerHTML = `Вы вошли как: ${user.email}`;
-      authStatus.style.color = '#4CAF50';
-    } else {
-      // Пользователь не авторизован
-      translateBtn.style.display = 'none';
-      authStatus.innerHTML = 'Для перевода требуется авторизация';
-      authStatus.style.color = '#f44336';
-    }
-  });
-
-  // Обработчик кнопки перевода
-  translateBtn.addEventListener('click', async function() {
+  // Обработчик кнопки
+  document.getElementById('translate-btn').addEventListener('click', async function() {
     const btn = this;
-    btn.disabled = true;
-    btn.textContent = 'Перевожу...';
+    const statusEl = document.getElementById('translate-status');
     
+    btn.disabled = true;
+    statusEl.style.display = 'block';
+    statusEl.innerHTML = '<div class="spinner"></div> Начинаем перевод...';
+
     try {
-      // 1. Получаем контент
+      // 1. Проверяем авторизацию
+      const user = auth.currentUser;
+      if (!user) throw new Error("Требуется авторизация");
+
+      // 2. Получаем контент
       const content = document.querySelector('.post-content').innerText;
       
-      // 2. Получаем токен пользователя
-      const user = auth.currentUser;
-      if (!user) throw new Error('Требуется авторизация');
-      
-      const token = await user.getIdToken();
-      
-      // 3. Отправляем запрос на перевод (пример через Firebase Functions)
-      const response = await fetch('https://your-firebase-function-url/translate', {
+      // 3. Отправляем запрос в Netlify Function
+      const response = await fetch('/.netlify/functions/translate', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: content.substring(0, 5000) })
       });
-      
-      if (!response.ok) throw new Error(await response.text());
-      
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Ошибка сервера");
+      }
+
       // 4. Обновляем контент
       const data = await response.json();
       document.querySelector('.post-content').innerHTML = data.translation;
-      
-      btn.textContent = 'Готово!';
-      setTimeout(() => btn.remove(), 2000);
+      statusEl.innerHTML = 'Перевод завершён!';
       
     } catch (error) {
-      console.error('Ошибка перевода:', error);
-      btn.textContent = 'Ошибка!';
-      btn.style.background = '#f44336';
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.textContent = 'Перевести на English';
-        btn.style.background = '#4CAF50';
-      }, 2000);
+      console.error("Ошибка:", error);
+      statusEl.innerHTML = `Ошибка: ${error.message}`;
+      btn.disabled = false;
+    } finally {
+      setTimeout(() => statusEl.style.display = 'none', 5000);
     }
+  });
+
+  // Показываем/скрываем кнопку при изменении статуса авторизации
+  onAuthStateChanged(auth, (user) => {
+    const btn = document.getElementById('translate-btn');
+    btn.style.display = user ? 'block' : 'none';
   });
 </script>
 </body>
