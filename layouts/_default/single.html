@@ -5,70 +5,151 @@
   <meta charset="UTF-8">
   <title>{{ .Title }} | {{ .Site.Title }}</title>
   <style>
+    :root {
+      --primary: #4361ee;       /* Основной синий */
+      --primary-light: #4895ef; /* Светло-синий */
+      --primary-dark: #3a0ca3;  /* Темно-синий */
+      --accent: #4CC9F0;        /* Акцентный голубой */
+      --success: #4CAF50;       /* Зеленый */
+      --success-dark: #2E7D32;  /* Темно-зеленый */
+      --error: #F44336;         /* Красный */
+      --background: #f8f9fa;    /* Фон */
+      --text: #212529;          /* Основной текст */
+      --text-light: #6c757d;    /* Светлый текст */
+      --border: #dee2e6;       /* Границы */
+    }
+
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       line-height: 1.6;
+      color: var(--text);
+      background-color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Контейнер для контента */
+    .content-container {
+      max-width: 800px;
       margin: 0 auto;
       padding: 20px;
     }
+
+    /* Стили статьи */
     .post-content {
       margin-bottom: 60px;
+      line-height: 1.7;
+      font-size: 1.1rem;
     }
+
+    /* Заголовки в статье */
+    .post-content h1,
+    .post-content h2,
+    .post-content h3 {
+      color: var(--primary-dark);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .post-content h1 {
+      font-size: 2rem;
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 0.5rem;
+    }
+
+    .post-content h2 {
+      font-size: 1.7rem;
+      border-left: 4px solid var(--primary);
+      padding-left: 1rem;
+    }
+
+    .post-content h3 {
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
+
+    /* Ссылки */
+    .post-content a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .post-content a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    /* Кнопка перевода (в ваших цветах) */
     #translate-btn {
       position: fixed;
       bottom: 20px;
       right: 20px;
       padding: 12px 24px;
-      background: #4CAF50;
+      background: var(--primary);       /* Используем основной синий */
       color: white;
       border: none;
       border-radius: 30px;
       cursor: pointer;
       font-size: 16px;
       font-weight: 500;
-      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3); /* Тень в цвете кнопки */
       transition: all 0.3s ease;
       z-index: 100;
     }
+
     #translate-btn:hover {
-      background: #43A047;
+      background: var(--primary-dark);  /* Темно-синий при наведении */
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+      box-shadow: 0 6px 16px rgba(58, 12, 163, 0.4);
     }
+
     #translate-btn:disabled {
-      background: #A5D6A7;
+      background: var(--text-light);
       cursor: not-allowed;
     }
+
+    /* Статус авторизации */
     #auth-status {
       position: fixed;
       bottom: 80px;
       right: 20px;
-      background: #f8f9fa;
+      background: white;
       padding: 10px 15px;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
     }
+
+    /* Статус перевода */
     #translate-status {
       position: fixed;
       bottom: 140px;
       right: 20px;
-      background: #fff;
+      background: white;
       padding: 10px 15px;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       max-width: 300px;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
     }
+
+    /* Спиннер загрузки */
     .spinner {
       display: inline-block;
       width: 20px;
       height: 20px;
       border: 3px solid rgba(0,0,0,.1);
       border-radius: 50%;
-      border-top-color: #4CAF50;
+      border-top-color: var(--primary); /* Спиннер в основном цвете */
       animation: spin 1s ease-in-out infinite;
       margin-right: 10px;
       vertical-align: middle;
     }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -76,9 +157,11 @@
 </head>
 <body>
 
-<article class="post-content">
-  {{ .Content }}
-</article>
+<div class="content-container">
+  <article class="post-content">
+    {{ .Content }}
+  </article>
+</div>
 
 <div id="auth-status"></div>
 <div id="translate-status" style="display:none;"></div>
@@ -92,7 +175,7 @@
     apiKey: "AIzaSyBOgF_Ugu3KCqb26VDd1CtRs6dECJK7g4U",
     authDomain: "purecheck.firebaseapp.com",
     projectId: "purecheck",
-    storageBucket: "purecheck.firebasestorage.app",
+    storageBucket: "purecheck.appspot.com",
     messagingSenderId: "1077616945405",
     appId: "1:1077616945405:web:02f01694ac5cba34a13694",
     measurementId: "G-BSGH7E645X"
@@ -108,11 +191,11 @@
     if (user) {
       btn.style.display = 'block';
       authStatus.textContent = `Вы вошли как: ${user.email}`;
-      authStatus.style.color = '#4CAF50';
+      authStatus.style.color = 'var(--primary)'; /* Синий цвет для статуса */
     } else {
       btn.style.display = 'none';
       authStatus.textContent = 'Для перевода требуется авторизация';
-      authStatus.style.color = '#f44336';
+      authStatus.style.color = 'var(--error)'; /* Красный для ошибки */
     }
   });
 
@@ -125,30 +208,44 @@
     statusEl.innerHTML = '<div class="spinner"></div> Начинаем перевод...';
 
     try {
-      const user = auth.currentUser;
-      if (!user) throw new Error("Требуется авторизация");
+      // 1. Определяем правильный URL для API
+      const apiUrl = window.location.hostname.includes('localhost') || 
+                     window.location.hostname.includes('github.io')
+        ? 'https://purecheck.netlify.app/.netlify/functions/translate'
+        : '/.netlify/functions/translate';
 
+      // 2. Получаем текст для перевода
       const content = document.querySelector('.post-content').innerText;
-      const response = await fetch('/.netlify/functions/translate', {
+      
+      // 3. Отправляем запрос
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: content.substring(0, 5000) })
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Ошибка сервера");
+      // 4. Проверяем ответ
+      const responseText = await response.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        throw new Error(`Сервер вернул не JSON: ${responseText.slice(0, 100)}...`);
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Ошибка сервера");
+      }
+
+      // 5. Обновляем контент
       document.querySelector('.post-content').innerHTML = data.translation;
       statusEl.innerHTML = 'Перевод завершён!';
-      
+        
     } catch (error) {
-      console.error("Ошибка:", error);
+      console.error("Ошибка перевода:", error);
       statusEl.innerHTML = `Ошибка: ${error.message}`;
-      btn.disabled = false;
     } finally {
+      btn.disabled = false;
       setTimeout(() => statusEl.style.display = 'none', 5000);
     }
   });
