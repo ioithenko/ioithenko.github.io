@@ -81,28 +81,91 @@
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const rememberMe = document.getElementById('remember').checked;
+      const errorDiv = document.getElementById('error-message');
+
+      // Очищаем предыдущие ошибки
+      errorDiv.textContent = '';
+      errorDiv.style.display = 'none';
+
+      const submitButton = e.target.querySelector('button[type="submit"]');
+      const originalText = submitButton.textContent;
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Вход...';
 
       try {
+        // Устанавливаем persistence (запоминание сессии)
         await setPersistence(
           auth,
           rememberMe ? browserLocalPersistence : browserSessionPersistence
         );
         
+        // Пробуем войти
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
-        // --- Аналитика: логируем вход ---
-        console.log("Отправляю событие login");
+        // Логируем успешный вход
+        console.log("Успешный вход:", userCredential.user);
         logEvent(analytics, 'login', { 
           method: 'email',
           user_id: userCredential.user.uid 
-        });  
-        } catch (error) {
-          // Логируем ошибку
-          logEvent(analytics, 'login_error', {
-            error: error.code 
-          });
+        });
+        
+        // Перенаправляем на главную
+        window.location.href = '/';
+        
+      } catch (error) {
+        console.error("Ошибка входа:", error.code, error.message);
+        
+        // Определяем понятное сообщение об ошибке
+        let friendlyMessage = '';
+        
+        switch(error.code) {
+          case 'auth/invalid-email':
+            friendlyMessage = 'Некорректный адрес email';
+            break;
+          case 'auth/user-disabled':
+            friendlyMessage = 'Этот аккаунт был отключен';
+            break;
+          case 'auth/user-not-found':
+            friendlyMessage = 'Пользователь с таким email не найден';
+            break;
+          case 'auth/wrong-password':
+            friendlyMessage = 'Неверный пароль';
+            break;
+          case 'auth/too-many-requests':
+            friendlyMessage = 'Слишком много попыток. Попробуйте позже или сбросьте пароль';
+            break;
+          case 'auth/network-request-failed':
+            friendlyMessage = 'Проблемы с интернет-соединением';
+            break;
+          default:
+            friendlyMessage = 'Произошла ошибка при входе. Пожалуйста, попробуйте снова';
         }
+        
+        // Показываем ошибку пользователю
+        errorDiv.textContent = friendlyMessage;
+        errorDiv.style.display = 'block';
+        errorDiv.style.color = '#dc3545';
+        errorDiv.style.backgroundColor = '#f8d7da';
+        errorDiv.style.padding = '10px';
+        errorDiv.style.borderRadius = '4px';
+        errorDiv.style.marginTop = '10px';
+        errorDiv.style.border = '1px solid #f5c6cb';
+        
+        // Логируем ошибку в аналитику
+        logEvent(analytics, 'login_error', {
+          error_code: error.code,
+          error_message: error.message
+        });
+      }
+      finally{
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
     }
+
+    // Инициализация формы
+    document.getElementById('login-form')?.addEventListener('submit', handleLogin);
 
     // Показать ошибку
     function showError(message) {
@@ -272,6 +335,12 @@
     .auth-container {
       display: none;
     }
+
+    .auth-success {
+        background: rgba(67, 97, 238, 0.05);
+        border-left: 4px solid var(--primary);
+        padding:1rem;
+      }
   </style>
 </head>
 
@@ -342,7 +411,7 @@
     </div>
     
     <!-- Защищенный контент -->
-    <div class="protected-content">
+    <div class="protected-content auth-success">
       <p style="text-align:center; margin-top: 1rem;">
         Вы уже авторизованы!
       </p>
