@@ -20,11 +20,11 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "/auth/";
-      }
-    });
+    // onAuthStateChanged(auth, (user) => {
+    //   if (!user) {
+    //     window.location.href = "/auth/";
+    //   }
+    // });
   </script>
 </head>
 
@@ -55,7 +55,7 @@
           if (!user) {
             mainContent.innerHTML = `
               <div style="padding: 2rem; text-align: center; font-size: 1.2rem;">
-                🔒 Необходимо <a href="/auth/" style="color: #007bff;">авторизоваться</a>, чтобы просматривать содержимое этой страницы.
+                🔒 Необходимо <a href="/authorization/" style="color: #007bff;">авторизоваться</a>, чтобы просматривать содержимое этой страницы.
               </div>
             `;
           } else {
