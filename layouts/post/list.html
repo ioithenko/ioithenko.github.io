@@ -1,0 +1,86 @@
+<!-- layouts/_default/list.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  {{ partial "head" . }}
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOgF_Ugu3KCqb26VDd1CtRs6dECJK7g4U",
+      authDomain: "purecheck.firebaseapp.com",
+      projectId: "purecheck",
+      storageBucket: "purecheck.firebasestorage.app",
+      messagingSenderId: "1077616945405",
+      appId: "1:1077616945405:web:02f01694ac5cba34a13694",
+      measurementId: "G-BSGH7E645X"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "/auth/";
+      }
+    });
+  </script>
+</head>
+
+{{ $section := .Section }}
+
+<script type="module">
+  const currentSection = "{{ $section }}";
+  if (currentSection === "post") {
+    import("https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js").then(({ initializeApp }) => {
+      import("https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js").then(({ getAuth, onAuthStateChanged }) => {
+        const firebaseConfig = {
+          apiKey: "AIzaSyBOgF_Ugu3KCqb26VDd1CtRs6dECJK7g4U",
+          authDomain: "purecheck.firebaseapp.com",
+          projectId: "purecheck",
+          storageBucket: "purecheck.firebasestorage.app",
+          messagingSenderId: "1077616945405",
+          appId: "1:1077616945405:web:02f01694ac5cba34a13694",
+          measurementId: "G-BSGH7E645X"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const mainContent = document.querySelector('main') || document.body;
+        const originalContent = mainContent.innerHTML;
+
+        onAuthStateChanged(auth, (user) => {
+          if (!user) {
+            mainContent.innerHTML = `
+              <div style="padding: 2rem; text-align: center; font-size: 1.2rem;">
+                🔒 Необходимо <a href="/auth/" style="color: #007bff;">авторизоваться</a>, чтобы просматривать содержимое этой страницы.
+              </div>
+            `;
+          } else {
+            mainContent.innerHTML = originalContent;
+          }
+        });
+      });
+    });
+  }
+</script>
+
+<body>
+  {{ partial "header" . }}
+
+  <main>
+    <h1>{{ .Title }}</h1>
+
+    {{ range .Pages }}
+      <article>
+        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        {{ .Summary }}
+      </article>
+    {{ end }}
+  </main>
+
+  {{ partial "footer" . }}
+</body>
+</html>

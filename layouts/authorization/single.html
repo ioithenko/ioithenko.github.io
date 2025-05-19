@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  {{ partial "head" . }}
+  
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword,
+      setPersistence,
+      createUserWithEmailAndPassword,
+      browserSessionPersistence,
+      browserLocalPersistence,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    
+    // 🔥 Добавляем импорт Analytics
+    import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOgF_Ugu3KCqb26VDd1CtRs6dECJK7g4U",
+      authDomain: "purecheck.firebaseapp.com",
+      projectId: "purecheck",
+      storageBucket: "purecheck.firebasestorage.app",
+      messagingSenderId: "1077616945405",
+      appId: "1:1077616945405:web:02f01694ac5cba34a13694",
+      measurementId: "G-BSGH7E645X"
+    };
+
+    // Инициализация
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const analytics = getAnalytics(app); // ← Вот это критично!
+  
+    logEvent(analytics, 'page_view', { 
+      page_title: document.title,
+      page_path: window.location.pathname 
+    });
+
+    // Проверка защищенных путей
+    const protectedPaths = ['/post', '/dashboard']; // Добавьте другие защищенные пути
+
+    // Проверяем текущий путь
+    const isProtectedPath = protectedPaths.some(path => 
+      window.location.pathname.startsWith(path)
+    );
+
+    // Проверка авторизации
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Авторизован - скрываем форму входа
+        document.querySelector('.auth-container').style.display = 'none';
+        
+        // Если на странице авторизации - редирект
+        if (window.location.pathname === '/auth/') {
+          window.location.href = '/';
+        }
+        
+        // Показываем защищенный контент
+        document.querySelector('.protected-content').style.display = 'block';
+      } else {
+        // Не авторизован - показываем форму входа
+        document.querySelector('.auth-container').style.display = 'block';
+        
+        // Если на защищенной странице - редирект
+        if (isProtectedPath) {
+          window.location.href = '/auth/';
+        }
+        
+        // Скрываем защищенный контент
+        document.querySelector('.protected-content').style.display = 'none';
+      }
+    });
+
+    // Обработчик входа
+    async function handleLogin(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const rememberMe = document.getElementById('remember').checked;
+
+      try {
+        await setPersistence(
+          auth,
+          rememberMe ? browserLocalPersistence : browserSessionPersistence
+        );
+        
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        
+        // --- Аналитика: логируем вход ---
+        console.log("Отправляю событие login");
+        logEvent(analytics, 'login', { 
+          method: 'email',
+          user_id: userCredential.user.uid 
+        });  
+        } catch (error) {
+          // Логируем ошибку
+          logEvent(analytics, 'login_error', {
+            error: error.code 
+          });
+        }
+    }
+
+    // Показать ошибку
+    function showError(message) {
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      setTimeout(() => errorDiv.style.display = 'none', 5000);
+    }
+    
+    // Инициализация формы
+    document.getElementById('login-form')?.addEventListener('submit', handleLogin);
+
+    // Обработчик регистрации
+    async function handleRegister(e) {
+      e.preventDefault();
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // --- Логируем успешную регистрацию с доп. параметрами ---
+        logEvent(analytics, 'sign_up', {
+          method: 'email',
+          user_id: userCredential.user.uid, // опционально
+          email_provider: email.split('@')[1], // например, 'gmail.com'
+          signup_time: new Date().toISOString() // время регистрации
+        });
+        
+        window.location.href = '/';
+      } catch (error) {
+        // --- Логируем ошибку регистрации ---
+        logEvent(analytics, 'signup_error', {
+          error_code: error.code, // 'auth/email-already-in-use'
+          error_message: error.message,
+          input_email: email // для анализа проблемных email
+        });
+        
+        // Показываем ошибку пользователю
+        document.getElementById('error-message-reg').textContent = error.message;
+        document.getElementById('error-message-reg').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('error-message-reg').style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    // Слушатели событий
+    document.getElementById('register-form')?.addEventListener('submit', handleRegister);
+  </script>
+
+  <style>
+    #error-message {
+      display: none;
+      padding: 10px;
+      background: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      margin-top: 15px;
+    }
+    
+    .protected-content {
+      display: none;
+    }
+    
+    .auth-only {
+      display: none;
+    }
+    
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a0ca3;
+      --light: #f8f9fa;
+      --white: #ffffff;
+      --gray-light: #e9ecef;
+      --gray: #adb5bd;
+      --dark: #212529;
+      --transition: all 0.3s ease;
+    }
+
+    .auth-container {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 2.5rem;
+      border-radius: 12px;
+      background: var(--white);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary);
+    }
+
+    .auth-title {
+      text-align: center;
+      color: var(--dark);
+      margin-bottom: 1.8rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      border: 1px solid var(--gray-light);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      background-color: var(--light);
+    }
+
+    .input-group input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+      background-color: var(--white);
+    }
+
+    .auth-button {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .auth-button:hover {
+      background: var(--primary-dark);
+    }
+    
+    .remember-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .remember-group input {
+      width: auto;
+      margin-right: 10px;
+    }
+    
+    .remember-group label {
+      margin-bottom: 0;
+    }
+      
+    .protected-content {
+      display: none;
+    }
+    
+    .auth-container {
+      display: none;
+    }
+  </style>
+</head>
+
+<script>
+  window.switchToRegister = function () {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'block';
+    document.getElementById('auth-title').textContent = 'Регистрация';
+    document.getElementById('auth-subtitle').textContent = 'Создайте новый аккаунт';
+  };
+
+  window.switchToLogin = function () {
+    document.getElementById('register-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+    document.getElementById('auth-title').textContent = 'Добро пожаловать';
+    document.getElementById('auth-subtitle').textContent = 'Войдите в свой аккаунт';
+  };
+</script>
+
+<body class="auth-page">
+  {{ partial "header" . }}
+
+  <main class="auth-main">
+    <!-- Контейнер авторизации -->
+    <div class="auth-container">
+      <div class="auth-header">
+        <h1 id="auth-title">Добро пожаловать</h1>
+        <p id="auth-subtitle">Войдите в свой аккаунт</p>
+      </div>
+
+      <!-- Форма входа -->
+      <form class="auth-form" id="login-form">
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="your@email.com" required>
+        </div>
+        <div class="input-group">
+          <label for="password">Пароль</label>
+          <input id="password" type="password" placeholder="••••••••" required>
+        </div>
+        <div class="input-group" style="display: flex; align-items: center;">
+          <input id="remember" type="checkbox" style="width: auto; margin-right: 10px;">
+          <label for="remember" style="margin-bottom: 0;">Запомнить меня</label>
+        </div>
+        <button class="auth-button" type="submit">Войти</button>
+        <p style="text-align:center; margin-top: 1rem;">
+          Нет аккаунта? <a href="#" onclick="switchToRegister()">Зарегистрироваться</a>
+        </p>
+        <div id="error-message"></div>
+      </form>
+
+      <!-- Форма регистрации (скрыта по умолчанию) -->
+      <form class="auth-form" id="register-form" style="display:none;">
+        <div class="input-group">
+          <label for="reg-email">Email</label>
+          <input id="reg-email" type="email" placeholder="your@email.com" required>
+        </div>
+        <div class="input-group">
+          <label for="reg-password">Пароль</label>
+          <input id="reg-password" type="password" placeholder="••••••••" required>
+        </div>
+        <button class="auth-button" type="submit">Зарегистрироваться</button>
+        <p style="text-align:center; margin-top: 1rem;">
+          Уже есть аккаунт? <a href="#" onclick="switchToLogin()">Войти</a>
+        </p>
+        <div id="error-message-reg"></div>
+      </form>
+    </div>
+    
+    <!-- Защищенный контент -->
+    <div class="protected-content">
+      <p style="text-align:center; margin-top: 1rem;">
+        Вы уже авторизованы!
+      </p>
+    </div>
+  </main>
+
+  {{ partial "footer" . }}
+</body>
+</html>

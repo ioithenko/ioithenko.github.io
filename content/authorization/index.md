@@ -1,0 +1,4 @@
+---
+title: "Авторизация"
+type: "authorization"
+---

@@ -1,0 +1,21 @@
+# Navigation Links
+#   To link a homepage widget, specify the URL as a hash `#` followed by the filename of the
+#     desired widget in your `content/home/` folder.
+#   The weight parameter defines the order that the links will appear in.
+
+main:
+  - name: Ключевая информация
+    url: post
+    weight: 20
+  - name: Разработчики
+    url: people
+    weight: 30
+  - name: Авторизация
+    url: authorization
+    weight: 40
+  - name: Выход
+    url: logout
+    weight: 60
+    id: logout-link
+    params:
+      class: hidden

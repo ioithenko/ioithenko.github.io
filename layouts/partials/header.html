@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <!-- Логотип (остается слева) -->
+    <a class="navbar-brand" href="/">{{ .Site.Title }}</a>
+    
+    <!-- Кнопка для мобильных -->
+    <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <!-- Меню (выравниваем справа) -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        {{ range .Site.Menus.main }}
+        <li class="nav-item">
+          <a class="nav-link{{ if $.IsMenuCurrent "main" . }} active{{ end }}" href="{{ .URL | relURL }}">
+            {{ .Name }}
+          </a>
+        </li>
+        {{ end }}
+
+        <!-- Ключевая информация — только для авторизованных -->
+        <li class="nav-item" id="private-info" style="display: none;">
+          <a class="nav-link" href="/secret/">Ключевая информация</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* Дополнительные стили для точного позиционирования */
+  .navbar-collapse {
+    flex-grow: 0; /* Не растягивать на всю ширину */
+  }
+  .nav-item {
+    margin-left: 1.5rem; /* Расстояние между пунктами */
+  }
+  @media (max-width: 992px) {
+    .navbar-collapse {
+      padding-top: 1rem;
+    }
+    .nav-item {
+      margin-left: 0;
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>

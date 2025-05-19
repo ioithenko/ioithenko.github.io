@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Выход из аккаунта</title>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOgF_Ugu3KCqb26VDd1CtRs6dECJK7g4U",
+      authDomain: "purecheck.firebaseapp.com",
+      projectId: "purecheck",
+      storageBucket: "purecheck.firebasestorage.app",
+      messagingSenderId: "1077616945405",
+      appId: "1:1077616945405:web:02f01694ac5cba34a13694",
+      measurementId: "G-BSGH7E645X"
+    };
+
+    // Инициализация Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Выход из аккаунта
+    signOut(auth).then(() => {
+      document.getElementById('status').textContent = 'Вы успешно вышли из аккаунта. Перенаправляем на главную страницу.';
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000); // редирект через 2 секунды
+    }).catch((error) => {
+      document.getElementById('status').textContent = 'Ошибка при выходе: ' + error.message;
+    });
+  </script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+    #status {
+      font-size: 1.2rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="status">Выход из аккаунта...</div>
+</body>
+</html>
