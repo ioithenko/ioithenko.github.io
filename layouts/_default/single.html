@@ -20,7 +20,7 @@
       bottom: 20px;
       right: 20px;
       padding: 12px 24px;
-      background: #4CAF50; /* Зеленый цвет */
+      background: #4CAF50;
       color: white;
       border: none;
       border-radius: 30px;
@@ -49,6 +49,30 @@
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+    #translate-status {
+      position: fixed;
+      bottom: 140px;
+      right: 20px;
+      background: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      max-width: 300px;
+    }
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0,0,0,.1);
+      border-radius: 50%;
+      border-top-color: #4CAF50;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -58,17 +82,13 @@
 </article>
 
 <div id="auth-status"></div>
+<div id="translate-status" style="display:none;"></div>
 <button id="translate-btn" style="display:none;">Перевести на English</button>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js';
   import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js';
 
-  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyBOgF_Ugu3KCqb26VDd1CtRs6dECJK7g4U",
     authDomain: "purecheck.firebaseapp.com",
@@ -79,11 +99,24 @@
     measurementId: "G-BSGH7E645X"
   };
 
-  // Инициализация Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  // Обработчик кнопки
+  onAuthStateChanged(auth, (user) => {
+    const btn = document.getElementById('translate-btn');
+    const authStatus = document.getElementById('auth-status');
+    
+    if (user) {
+      btn.style.display = 'block';
+      authStatus.textContent = `Вы вошли как: ${user.email}`;
+      authStatus.style.color = '#4CAF50';
+    } else {
+      btn.style.display = 'none';
+      authStatus.textContent = 'Для перевода требуется авторизация';
+      authStatus.style.color = '#f44336';
+    }
+  });
+
   document.getElementById('translate-btn').addEventListener('click', async function() {
     const btn = this;
     const statusEl = document.getElementById('translate-status');
@@ -93,14 +126,10 @@
     statusEl.innerHTML = '<div class="spinner"></div> Начинаем перевод...';
 
     try {
-      // 1. Проверяем авторизацию
       const user = auth.currentUser;
       if (!user) throw new Error("Требуется авторизация");
 
-      // 2. Получаем контент
       const content = document.querySelector('.post-content').innerText;
-      
-      // 3. Отправляем запрос в Netlify Function
       const response = await fetch('/.netlify/functions/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -112,7 +141,6 @@
         throw new Error(error.error || "Ошибка сервера");
       }
 
-      // 4. Обновляем контент
       const data = await response.json();
       document.querySelector('.post-content').innerHTML = data.translation;
       statusEl.innerHTML = 'Перевод завершён!';
@@ -124,12 +152,6 @@
     } finally {
       setTimeout(() => statusEl.style.display = 'none', 5000);
     }
-  });
-
-  // Показываем/скрываем кнопку при изменении статуса авторизации
-  onAuthStateChanged(auth, (user) => {
-    const btn = document.getElementById('translate-btn');
-    btn.style.display = user ? 'block' : 'none';
   });
 </script>
 </body>
