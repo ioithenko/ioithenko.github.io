@@ -191,11 +191,11 @@
     if (user) {
       btn.style.display = 'block';
       authStatus.textContent = `Вы вошли как: ${user.email}`;
-      authStatus.style.color = 'var(--primary)'; /* Синий цвет для статуса */
+      authStatus.style.color = '#4361ee';
     } else {
       btn.style.display = 'none';
       authStatus.textContent = 'Для перевода требуется авторизация';
-      authStatus.style.color = 'var(--error)'; /* Красный для ошибки */
+      authStatus.style.color = '#4361ee';
     }
   });
 
