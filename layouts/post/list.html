@@ -1,8 +1,146 @@
-<!-- layouts/_default/list.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   {{ partial "head" . }}
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3a0ca3;
+      --accent: #4895ef;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --border-radius: 12px;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+    
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+    
+    article {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-left: 4px solid transparent;
+    }
+    
+    article:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      border-left-color: var(--accent);
+    }
+    
+    article h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    
+    article h2 a {
+      color: var(--dark);
+      text-decoration: none;
+      transition: var(--transition);
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    
+    article h2 a:hover {
+      opacity: 0.8;
+    }
+    
+    article p {
+      color: var(--gray);
+      margin-bottom: 1rem;
+    }
+    
+    /* Стиль для сообщения о авторизации */
+    .auth-message {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 3rem 2rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+    
+    .auth-message a {
+      display: inline-block;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: 1rem;
+      transition: var(--transition);
+      box-shadow: 0 4px 6px rgba(67, 97, 238, 0.3);
+    }
+    
+    .auth-message a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(67, 97, 238, 0.4);
+    }
+    
+    /* Анимации */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    article {
+      animation: fadeIn 0.6s ease forwards;
+    }
+    
+    article:nth-child(1) { animation-delay: 0.1s; }
+    article:nth-child(2) { animation-delay: 0.2s; }
+    article:nth-child(3) { animation-delay: 0.3s; }
+    /* и так далее... */
+  </style>
+  
+  <!-- Подключаем красивый шрифт Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
@@ -54,8 +192,10 @@
         onAuthStateChanged(auth, (user) => {
           if (!user) {
             mainContent.innerHTML = `
-              <div style="padding: 2rem; text-align: center; font-size: 1.2rem;">
-                🔒 Необходимо <a href="/authorization/" style="color: #007bff;">авторизоваться</a>, чтобы просматривать содержимое этой страницы.
+              <div class="auth-message">
+                <h2>Доступ ограничен 🔒</h2>
+                <p>Для просмотра материалов необходимо авторизоваться</p>
+                <a href="/authorization/">Войти в систему</a>
               </div>
             `;
           } else {
@@ -63,8 +203,8 @@
           }
         });
       });
-    });
-  }
+  });
+}
 </script>
 
 <body>
@@ -77,10 +217,13 @@
       <article>
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
         {{ .Summary }}
+        <a href="{{ .RelPermalink }}" class="read-more">Читать далее →</a>
       </article>
     {{ end }}
   </main>
 
   {{ partial "footer" . }}
 </body>
+
+
 </html>
