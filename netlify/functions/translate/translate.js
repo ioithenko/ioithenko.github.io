@@ -1,17 +1,47 @@
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
-  // Проверяем наличие текста
-  const { text } = JSON.parse(event.body);
-  if (!text) {
+  // Устанавливаем CORS заголовки
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  // Обрабатываем OPTIONS запрос (preflight)
+  if (event.httpMethod === 'OPTIONS') {
     return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "Текст для перевода не предоставлен" })
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ message: 'CORS preflight response' })
+    };
+  }
+
+  // Проверяем метод запроса
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ error: 'Method Not Allowed' })
     };
   }
 
   try {
-    // Запрос к Hugging Face
+    // Парсим тело запроса
+    const { text } = JSON.parse(event.body);
+    if (!text || typeof text !== 'string') {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Invalid text input' })
+      };
+    }
+
+    // Логируем запрос (для отладки)
+    console.log('Translating text:', text.substring(0, 50) + '...');
+
+    // Запрос к Hugging Face API
     const response = await fetch(
       'https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-ru-en',
       {
@@ -24,22 +54,43 @@ exports.handler = async (event) => {
       }
     );
 
+    // Обрабатываем ответ Hugging Face
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Hugging Face API error: ${error}`);
+      const errorData = await response.text();
+      console.error('Hugging Face API error:', errorData);
+      return {
+        statusCode: 502,
+        headers,
+        body: JSON.stringify({ 
+          error: 'Translation service unavailable',
+          details: errorData 
+        })
+      };
     }
 
     const data = await response.json();
+    
+    // Проверяем структуру ответа
+    if (!data || !Array.isArray(data) || !data[0].translation_text) {
+      throw new Error('Invalid response format from translation service');
+    }
+
     return {
       statusCode: 200,
-      body: JSON.stringify({ translation: data[0].translation_text })
+      headers,
+      body: JSON.stringify({ 
+        translation: data[0].translation_text,
+        detectedLanguage: 'ru'
+      })
     };
-    
+
   } catch (error) {
+    console.error('Translation error:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ 
-        error: "Ошибка перевода",
+        error: 'Internal server error',
         details: error.message 
       })
     };
