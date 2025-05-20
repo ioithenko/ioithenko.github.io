@@ -153,13 +153,81 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    /* Стили для PDF-блока */
+    .pdf-download-container {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: var(--background-light, #f8f9fa);
+      border-radius: 8px;
+      border-left: 4px solid var(--primary, #4361ee);
+    }
+
+    .pdf-download-title {
+      margin: 0 0 1rem 0;
+      color: var(--primary-dark, #3a0ca3);
+      font-size: 1.25rem;
+    }
+
+    .pdf-download-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--background, #4361ee);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(67, 97, 238, 0.2);
+    }
+
+    .pdf-download-button:hover {
+      background-color: var(--background, #3a0ca3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(58, 12, 163, 0.3);
+    }
+
+    .pdf-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
 
 <div class="content-container">
   <article class="post-content">
-    {{ .Content }}
+    <!-- Добавляем обработку ресурсов страницы -->
+    {{ with .Resources }}
+      <div class="page-resources">
+        {{ range . }}
+          {{ if eq .ResourceType "image" }}
+            <img src="{{ .RelPermalink }}" alt="{{ .Name }}" class="resource-image">
+          {{ else if eq .ResourceType "page" }}
+            <a href="{{ .RelPermalink }}" class="resource-file">{{ .Title }}</a>
+          {{ end }}
+        {{ end }}
+      </div>
+    {{ end }}
+
+    {{ $postName := path.Base (strings.TrimSuffix "/index.md" .File.Path) }}
+    {{ $pdfFile := printf "%s.pdf" $postName }}
+    {{ with .Resources.GetMatch $pdfFile }}
+    <div class="pdf-download-box">
+      <h3 class="pdf-download-title">Материалы для скачивания</h3>
+      <a href="{{ .RelPermalink }}" download class="pdf-download-button">
+        Скачать PDF {{ $postName }}.pdf
+      </a>
+    </div>
+    {{ end }}
+
+    <!-- Улучшенный вывод контента -->
+    <div class="content-wrapper">
+      {{ .Content | safeHTML }}
+    </div>
   </article>
 </div>
 
